@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: citoyx
+  labels:
+    app: citoyx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: citoyx
+  template:
+    metadata:
+      labels:
+        app: citoyx
+    spec:
+      containers:
+      - name: citoyx
+        image: citoyx/hugo:0.64.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 1313
+        env:
+        - name: HUGO_BASEURL
+          value: "https://citoyx.com"
+        volumeMounts:
+        - mountPath: /srv/hugo
+          name: citoyx-dir
+      volumes: 
+      - name: citoyx-dir
+        hostPath:
+          path: /data/citoyx 
+          type: Directory 

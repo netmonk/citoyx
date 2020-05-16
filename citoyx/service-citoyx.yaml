@@ -1,0 +1,41 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: citoyx
+spec:
+  ports:
+  - port: 1313
+    name: web
+    protocol: TCP
+  selector:
+    app: citoyx
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: citoyx-web
+spec:
+  entryPoints:
+    - web
+  routes:
+  - kind: Rule
+    match: Host(`citoyx.com`) || Host(`www.citoyx.com`) && PathPrefix(`/`)
+    services:
+    - name: citoyx
+      port: 1313
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: citoyx-web-tls
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - kind: Rule
+    match: Host(`citoyx.com`) || Host(`www.citoyx.com`) && PathPrefix(`/`)
+    services:
+    - name: citoyx
+      port: 1313
+  tls:
+    certResolver: le
